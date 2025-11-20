@@ -12,7 +12,7 @@
         :color="selectedHand ? winningHand == hand ? 'success' : 'error' :'' "
         link
         width="min-content"
-        @click="selectHand(hand)"
+        @click="!selectedHand ? selectHand(hand) : ''"
       >
         <v-card-text>
           <div class="d-flex ga-2">
