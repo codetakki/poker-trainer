@@ -44,14 +44,14 @@
 </template>
 
 <script lang="ts" setup>
-  import type { Hand, HandWEvaluation } from '@/types'
+  import type { Hand, HandWEvaluation, PokerCard } from '@/types'
   import { useTimestamp } from '@vueuse/core'
   import { computed, ref } from 'vue'
   import chenFormula from '@/chen-function'
   import { deck } from '@/types'
 
   const nrOfHands = ref<number>(2)
-  const selectedHand = ref<HandWEvaluation>()
+  const selectedHand = ref<HandWEvaluation | null>()
   const pickedRightHand = ref(false)
 
   const winningHand = ref<HandWEvaluation>()
@@ -60,7 +60,11 @@
 
   function selectHand (hand: HandWEvaluation) {
     selectedHand.value = hand
-    winningHand.value = (hands.value.reduce((max, hand) => hand.chenValue.value > max.chenValue.value ? hand : max, hands.value[0]))
+    winningHand.value = (hands.value.reduce((max, hand) => {
+      if (!max) return hand
+      return hand.chenValue.value > max.chenValue.value ? hand : max
+    }, hands.value[0],
+    ))
     pickedRightHand.value = selectedHand.value == winningHand.value
     timer.pause()
   }
@@ -86,7 +90,7 @@
     const firstCard = deckCopy.splice(firstIndex, 1)[0]
     const secondIndex = Math.floor(Math.random() * deckCopy.length)
     const secondCard = deckCopy.splice(secondIndex, 1)[0]
-    return [firstCard, secondCard]
+    return [firstCard as PokerCard, secondCard as PokerCard]
   }
 
 </script>
