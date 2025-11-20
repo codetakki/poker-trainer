@@ -39,18 +39,28 @@
         </div>
         <v-btn color="primary" size="x-large" @click="resetGame()">New hand</v-btn>
       </div>
+      <div v-else>
+        <div class="text-h6 mt-5">Number of hands</div>
+        <v-btn :disabled="nrOfHands <= 2" icon="mdi-minus" @click="nrOfHands--" />
+        <span class="text-h5 mx-3">{{ nrOfHands }}</span>
+        <v-btn icon="mdi-plus" @click="nrOfHands++" />
+      </div>
     </v-expand-transition>
+
   </v-container>
 </template>
 
 <script lang="ts" setup>
   import type { Hand, HandWEvaluation, PokerCard } from '@/types'
   import { useTimestamp } from '@vueuse/core'
-  import { computed, ref } from 'vue'
+  import { ref, watch } from 'vue'
   import chenFormula from '@/chen-function'
   import { deck } from '@/types'
 
   const nrOfHands = ref<number>(2)
+  watch(nrOfHands, () => {
+    hands.value = dealNewHands(nrOfHands.value)
+  })
   const selectedHand = ref<HandWEvaluation | null>()
   const pickedRightHand = ref(false)
 
